@@ -24,10 +24,10 @@ jobs:
           unzip -o "$ZIP" -d project
 
       - name: Compilar APK
-        run: gradle -p project assembleDebug
+        run: gradle -p project assembleDebug -Pandroid.lifecycle.compileToTarget=17 -Porg.gradle.java.installations.auto-download=false
 
       - name: Salvar APK
         uses: actions/upload-artifact@v4
         with:
-          name: AD-SPEED-APK
-          path: project/app/build/outputs/apk/debug/app-debug.apk
+        name: AD-SPEED-APK
+        path: project/app/build/outputs/apk/debug/app-debug.apk
