@@ -1,0 +1,29 @@
+name: Build AD SPEED APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Extrair projeto
+        run: |
+          unzip -o AD_SPEED_projeto_android-1.zip -d projeto
+
+      - name: Compilar APK
+        working-directory: projeto
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
