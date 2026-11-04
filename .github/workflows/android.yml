@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Baixar projeto
         uses: actions/checkout@v4
@@ -18,8 +19,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Android
-        uses: android-actions/setup-android@v3
+      - name: Instalar ferramentas Android
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -32,7 +36,7 @@ jobs:
       - name: Compilar APK
         run: gradle -p project assembleDebug
 
-      - name: Salvar APK
+      - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: AD-SPEED-APK
