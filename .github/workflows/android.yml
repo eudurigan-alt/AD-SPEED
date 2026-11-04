@@ -16,14 +16,24 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
+
+      - name: Configurar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
 
       - name: Extrair projeto
-        run: |
-          unzip -o AD_SPEED_projeto_android-1.zip -d projeto
+        run: unzip -o AD_SPEED_projeto_android.zip -d project
 
       - name: Compilar APK
-        working-directory: projeto
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: gradle -p project assembleDebug
+
+      - name: Salvar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AD-SPEED-APK
+          path: project/app/build/outputs/apk/debug/app-debug.apk
