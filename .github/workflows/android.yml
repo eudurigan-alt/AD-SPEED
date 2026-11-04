@@ -3,7 +3,8 @@ name: Build AD SPEED APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
@@ -19,26 +20,21 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Instalar ferramentas Android
-        run: |
-          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
-          yes | "$SDKMANAGER" --licenses || true
-          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
-
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - - name: Extrair projeto
-          run: |
-          ZIP=$(find . -type f -iname "*.zip" | head -n 1)
-    if [ -z "$ZIP" ]; then
-      echo "Arquivo ZIP não encontrado"
-      find . -maxdepth 3 -type f
-      exit 1
-    fi
-    unzip -o "$ZIP" -d project
+      - name: Localizar e extrair ZIP
+        run: |
+          ZIP=$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)
+          if [ -z "$ZIP" ]; then
+            echo "ZIP nao encontrado"
+            exit 1
+          fi
+          mkdir project
+          unzip -o "$ZIP" -d project
+
       - name: Compilar APK
         run: gradle -p project assembleDebug
 
