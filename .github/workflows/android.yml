@@ -30,9 +30,15 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Extrair projeto
-        run: unzip -o AD_SPEED_projeto_android.zip -d project
-
+      - - name: Extrair projeto
+          run: |
+          ZIP=$(find . -type f -iname "*.zip" | head -n 1)
+    if [ -z "$ZIP" ]; then
+      echo "Arquivo ZIP não encontrado"
+      find . -maxdepth 3 -type f
+      exit 1
+    fi
+    unzip -o "$ZIP" -d project
       - name: Compilar APK
         run: gradle -p project assembleDebug
 
