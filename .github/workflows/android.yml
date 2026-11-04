@@ -1,9 +1,5 @@
 name: Build AD SPEED APK
-on:
- workflow_dispatch:
- push:
- branches:
- - main
+on: [workflow_dispatch]
 jobs:
  build:
  runs-on: ubuntu-latest
@@ -19,18 +15,13 @@ jobs:
  uses: gradle/actions/setup-gradle@v4
  with:
  gradle-version: '8.9'
- - name: Localizar e extrair ZIP
+ - name: Extrair projeto
  run: |
- ZIP=$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)
- if [ -z "$ZIP" ]; then
- echo "ZIP nao encontrado"
- exit 1
- fi
- mkdir project
+ ZIP=$(find . -type f -iname "*.zip" | head -n 1)
  unzip -o "$ZIP" -d project
  - name: Compilar APK
  run: gradle -p project assembleDebug
- - name: Disponibilizar APK
+ - name: Salvar APK
  uses: actions/upload-artifact@v4
  with:
  name: AD-SPEED-APK
